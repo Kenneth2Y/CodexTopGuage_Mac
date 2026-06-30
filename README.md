@@ -12,6 +12,10 @@ CodexTopGuage_Mac 是一个 macOS menu bar 小工具，用来在顶部状态栏�
 
 > 注意：本项目使用 Codex app-server 的内部/实验性 `account/rateLimits/read` 通道。它不是公开稳定 API，Codex 更新后可能需要调整解析逻辑。
 
+![CodexTopGuage_Mac 运行截图](gauge.png)
+
+上图是软件运行截图：顶部状态栏显示 Codex 剩余额度，点击后显示 reset 时间、数据来源和 limit 信息。
+
 ### 功能
 
 - 在 macOS 顶部状态栏显示 5h 和 7d remaining 百分比。
@@ -38,6 +42,18 @@ swift build -c release
 
 运行后，Dock 不会出现图标；请查看 macOS 顶部 menu bar。
 
+### 手动重新打开
+
+如果你在菜单里点了 `Quit` 手动退出，可以用任一方式重新打开：
+
+```bash
+.build/release/CodexTopGuageMac
+```
+
+也可以在 Finder 里双击项目根目录的 `Start CodexTopGuage.command`。首次双击时，macOS 可能会提示安全确认；确认后它会自动构建 release 版本并启动菜单栏程序。
+
+如果已经启用开机自启动，也可以重新登录 macOS，LaunchAgent 会自动拉起它。
+
 ### 开机自启动
 
 启用当前用户登录后自动启动：
@@ -54,6 +70,10 @@ scripts/uninstall-launch-agent.sh
 ```
 
 当前 LaunchAgent 使用 `.build/release/CodexTopGuageMac` 的绝对路径。如果移动项目目录，请重新运行安装脚本。
+
+### menu bar 空间限制
+
+macOS 顶部 menu bar 的空间分配由系统控制。右侧状态栏图标很多时，系统可能隐藏、截断或挤掉部分菜单栏项目；应用本身不能完全控制这个行为。CodexTopGuage_Mac 已尽量使用短文本，例如 `Codex: 5h88% 7d67%`，但在窄屏或图标很多的情况下仍可能被系统遮挡。
 
 ### 本地开发
 
@@ -98,6 +118,10 @@ CodexTopGuage_Mac is a small macOS menu bar utility that shows local Codex remai
 
 > Note: this project uses the internal/experimental Codex app-server method `account/rateLimits/read`. It is not a stable public API, so future Codex updates may require parser changes.
 
+![CodexTopGuage_Mac screenshot](gauge.png)
+
+The image above is a runtime screenshot: the menu bar shows remaining Codex quota, and the menu shows reset times, data source, and limit metadata.
+
 ### Features
 
 - Shows 5h and 7d remaining percentages in the macOS menu bar.
@@ -124,6 +148,18 @@ swift build -c release
 
 After launch, the app has no Dock icon. Check the macOS menu bar.
 
+### Reopen Manually
+
+If you manually quit the app from the menu, reopen it with either method:
+
+```bash
+.build/release/CodexTopGuageMac
+```
+
+You can also double-click `Start CodexTopGuage.command` in the project root from Finder. On first launch, macOS may show a security confirmation; after confirmation, the script builds the release binary if needed and starts the menu bar app.
+
+If Start at Login is enabled, logging out and back into macOS will also start it again through LaunchAgent.
+
 ### Start at Login
 
 Enable auto-start for the current macOS user:
@@ -140,6 +176,10 @@ scripts/uninstall-launch-agent.sh
 ```
 
 The LaunchAgent uses the absolute path to `.build/release/CodexTopGuageMac`. If you move the project directory, run the install script again.
+
+### Menu Bar Space Limits
+
+macOS controls menu bar item placement. When the right side of the menu bar is crowded, the system may hide, truncate, or push out some items; the app cannot fully control that behavior. CodexTopGuage_Mac keeps the label short, for example `Codex: 5h88% 7d67%`, but it can still be hidden on narrow screens or heavily populated menu bars.
 
 ### Local Development
 
