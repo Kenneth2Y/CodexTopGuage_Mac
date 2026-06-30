@@ -38,6 +38,23 @@ swift build -c release
 
 运行后，Dock 不会出现图标；请查看 macOS 顶部 menu bar。
 
+### 开机自启动
+
+启用当前用户登录后自动启动：
+
+```bash
+chmod +x scripts/install-launch-agent.sh scripts/uninstall-launch-agent.sh
+scripts/install-launch-agent.sh
+```
+
+关闭开机自启动：
+
+```bash
+scripts/uninstall-launch-agent.sh
+```
+
+当前 LaunchAgent 使用 `.build/release/CodexTopGuageMac` 的绝对路径。如果移动项目目录，请重新运行安装脚本。
+
 ### 本地开发
 
 ```bash
@@ -106,6 +123,23 @@ swift build -c release
 ```
 
 After launch, the app has no Dock icon. Check the macOS menu bar.
+
+### Start at Login
+
+Enable auto-start for the current macOS user:
+
+```bash
+chmod +x scripts/install-launch-agent.sh scripts/uninstall-launch-agent.sh
+scripts/install-launch-agent.sh
+```
+
+Disable auto-start:
+
+```bash
+scripts/uninstall-launch-agent.sh
+```
+
+The LaunchAgent uses the absolute path to `.build/release/CodexTopGuageMac`. If you move the project directory, run the install script again.
 
 ### Local Development
 
