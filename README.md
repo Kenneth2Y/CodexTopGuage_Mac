@@ -30,7 +30,7 @@ CodexTopGuage_Mac 是一个 macOS menu bar 小工具，用来在顶部状态栏�
 ### 快速开始
 
 ```bash
-git clone https://github.com/YOUR_NAME/CodexTopGuage_Mac.git
+git clone https://github.com/Kenneth2Y/CodexTopGuage_Mac.git
 cd CodexTopGuage_Mac
 swift build -c release
 .build/release/CodexTopGuageMac
@@ -99,7 +99,7 @@ CodexTopGuage_Mac is a small macOS menu bar utility that shows local Codex usage
 ### Quick Start
 
 ```bash
-git clone https://github.com/YOUR_NAME/CodexTopGuage_Mac.git
+git clone https://github.com/Kenneth2Y/CodexTopGuage_Mac.git
 cd CodexTopGuage_Mac
 swift build -c release
 .build/release/CodexTopGuageMac
