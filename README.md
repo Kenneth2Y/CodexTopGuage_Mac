@@ -50,7 +50,7 @@ swift build -c release
 .build/release/CodexTopGuageMac
 ```
 
-也可以在 Finder 里双击项目根目录的 `Start CodexTopGuage.command`。首次双击时，macOS 可能会提示安全确认；确认后它会自动构建 release 版本并启动菜单栏程序。
+也可以在 Finder 里双击项目根目录的 `Start CodexTopGuage.command`。首次双击时，macOS 可能会提示安全确认；确认后它会自动构建 release 版本并启动菜单栏程序，然后自动关闭临时 Terminal 窗口。
 
 如果已经启用开机自启动，也可以重新登录 macOS，LaunchAgent 会自动拉起它。
 
@@ -156,7 +156,7 @@ If you manually quit the app from the menu, reopen it with either method:
 .build/release/CodexTopGuageMac
 ```
 
-You can also double-click `Start CodexTopGuage.command` in the project root from Finder. On first launch, macOS may show a security confirmation; after confirmation, the script builds the release binary if needed and starts the menu bar app.
+You can also double-click `Start CodexTopGuage.command` in the project root from Finder. On first launch, macOS may show a security confirmation; after confirmation, the script builds the release binary if needed, starts the menu bar app, and closes the temporary Terminal window automatically.
 
 If Start at Login is enabled, logging out and back into macOS will also start it again through LaunchAgent.
 
