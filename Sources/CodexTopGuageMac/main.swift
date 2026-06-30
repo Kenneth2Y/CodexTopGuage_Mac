@@ -13,20 +13,6 @@ struct UsageSnapshot {
     let fetchedAt: Date
 }
 
-enum RefreshInterval: TimeInterval, CaseIterable {
-    case fiveSeconds = 5
-    case tenSeconds = 10
-
-    var title: String {
-        switch self {
-        case .fiveSeconds:
-            return "5 seconds"
-        case .tenSeconds:
-            return "10 seconds"
-        }
-    }
-}
-
 struct AppServerUsageProvider: Sendable {
     private let codexPath: String
     private let timeout: TimeInterval
@@ -243,14 +229,14 @@ final class MenuBarController: NSObject, NSApplicationDelegate {
     private let statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
     private let provider = AppServerUsageProvider()
     private var timer: Timer?
-    private var refreshInterval: RefreshInterval = .fiveSeconds
+    private let refreshInterval: TimeInterval = 5
     private var latestSnapshot: UsageSnapshot?
     private var latestError: String?
     private var isRefreshing = false
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.setActivationPolicy(.accessory)
-        statusItem.button?.title = "Cdx --"
+        statusItem.button?.title = "Codex: --"
         statusItem.button?.toolTip = "Codex usage"
         refresh()
         scheduleTimer()
@@ -258,7 +244,7 @@ final class MenuBarController: NSObject, NSApplicationDelegate {
 
     private func scheduleTimer() {
         timer?.invalidate()
-        timer = Timer.scheduledTimer(withTimeInterval: refreshInterval.rawValue, repeats: true) { [weak self] _ in
+        timer = Timer.scheduledTimer(withTimeInterval: refreshInterval, repeats: true) { [weak self] _ in
             Task { @MainActor in
                 self?.refresh()
             }
@@ -271,7 +257,7 @@ final class MenuBarController: NSObject, NSApplicationDelegate {
         }
 
         isRefreshing = true
-        statusItem.button?.title = latestSnapshot.map(statusTitle) ?? "Cdx ..."
+        statusItem.button?.title = latestSnapshot.map(statusTitle) ?? "Codex: ..."
 
         Task {
             do {
@@ -290,24 +276,24 @@ final class MenuBarController: NSObject, NSApplicationDelegate {
         if let snapshot = latestSnapshot {
             statusItem.button?.title = statusTitle(for: snapshot)
         } else {
-            statusItem.button?.title = "Cdx --"
+            statusItem.button?.title = "Codex: --"
         }
 
         statusItem.menu = buildMenu()
     }
 
     private func statusTitle(for snapshot: UsageSnapshot) -> String {
-        let primary = snapshot.primaryPercent.map { "\($0)%" } ?? "--"
-        let secondary = snapshot.secondaryPercent.map { "\($0)%" } ?? "--"
-        return "Cdx 5h \(primary) 7d \(secondary)"
+        let primary = remainingPercent(fromUsedPercent: snapshot.primaryPercent)
+        let secondary = remainingPercent(fromUsedPercent: snapshot.secondaryPercent)
+        return "Codex: 5h\(primary) 7d\(secondary)"
     }
 
     private func buildMenu() -> NSMenu {
         let menu = NSMenu()
 
         if let snapshot = latestSnapshot {
-            menu.addItem(NSMenuItem(title: "5h usage: \(snapshot.primaryPercent.map { "\($0)%" } ?? "unavailable")", action: nil, keyEquivalent: ""))
-            menu.addItem(NSMenuItem(title: "7d usage: \(snapshot.secondaryPercent.map { "\($0)%" } ?? "unavailable")", action: nil, keyEquivalent: ""))
+            menu.addItem(NSMenuItem(title: "5h remaining: \(remainingPercent(fromUsedPercent: snapshot.primaryPercent))", action: nil, keyEquivalent: ""))
+            menu.addItem(NSMenuItem(title: "7d remaining: \(remainingPercent(fromUsedPercent: snapshot.secondaryPercent))", action: nil, keyEquivalent: ""))
             menu.addItem(NSMenuItem(title: "5h reset: \(countdown(to: snapshot.primaryResetsAt))", action: nil, keyEquivalent: ""))
             menu.addItem(NSMenuItem(title: "7d reset: \(countdown(to: snapshot.secondaryResetsAt))", action: nil, keyEquivalent: ""))
             menu.addItem(NSMenuItem(title: "Source: \(snapshot.source)", action: nil, keyEquivalent: ""))
@@ -328,27 +314,19 @@ final class MenuBarController: NSObject, NSApplicationDelegate {
             menu.addItem(NSMenuItem(title: "Status: \(latestError)", action: nil, keyEquivalent: ""))
         }
 
-        menu.addItem(.separator())
-
-        for interval in RefreshInterval.allCases {
-            let item = NSMenuItem(title: "Refresh: \(interval.title)", action: #selector(setRefreshInterval(_:)), keyEquivalent: "")
-            item.target = self
-            item.representedObject = interval.rawValue
-            item.state = interval == refreshInterval ? .on : .off
-            menu.addItem(item)
-        }
-
-        menu.addItem(.separator())
-
-        let refreshItem = NSMenuItem(title: "Refresh Now", action: #selector(refreshNow), keyEquivalent: "r")
-        refreshItem.target = self
-        menu.addItem(refreshItem)
-
         let quitItem = NSMenuItem(title: "Quit", action: #selector(quit), keyEquivalent: "q")
         quitItem.target = self
         menu.addItem(quitItem)
 
         return menu
+    }
+
+    private func remainingPercent(fromUsedPercent usedPercent: Int?) -> String {
+        guard let usedPercent else {
+            return "--"
+        }
+
+        return "\(max(0, min(100, 100 - usedPercent)))%"
     }
 
     private func countdown(to date: Date?) -> String {
@@ -377,20 +355,6 @@ final class MenuBarController: NSObject, NSApplicationDelegate {
         formatter.dateStyle = .none
         formatter.timeStyle = .medium
         return formatter.string(from: date)
-    }
-
-    @objc private func setRefreshInterval(_ sender: NSMenuItem) {
-        guard let rawValue = sender.representedObject as? TimeInterval, let interval = RefreshInterval(rawValue: rawValue) else {
-            return
-        }
-
-        refreshInterval = interval
-        scheduleTimer()
-        render()
-    }
-
-    @objc private func refreshNow() {
-        refresh()
     }
 
     @objc private func quit() {

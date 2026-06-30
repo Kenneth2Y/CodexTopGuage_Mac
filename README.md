@@ -8,15 +8,15 @@
 
 ## 中文
 
-CodexTopGuage_Mac 是一个 macOS menu bar 小工具，用来在顶部状态栏显示本机 Codex usage 信息，例如 `Cdx 5h 23% 7d 41%`。
+CodexTopGuage_Mac 是一个 macOS menu bar 小工具，用来在顶部状态栏显示本机 Codex 剩余额度信息，例如 `Codex: 5h88% 7d67%`。
 
 > 注意：本项目使用 Codex app-server 的内部/实验性 `account/rateLimits/read` 通道。它不是公开稳定 API，Codex 更新后可能需要调整解析逻辑。
 
 ### 功能
 
-- 在 macOS 顶部状态栏显示 5h 和 7d usage 百分比。
+- 在 macOS 顶部状态栏显示 5h 和 7d remaining 百分比。
 - 点击菜单查看 reset 倒计时、数据来源、limit 信息和最后更新时间。
-- 刷新间隔只能在 `5 seconds` 和 `10 seconds` 之间选择，默认 `5 seconds`。
+- 每 5 秒自动刷新，菜单不暴露刷新设置。
 - 完全本地运行，不上传 usage、prompt、项目路径或账号数据。
 - Codex 未安装、未登录、接口超时或返回空数据时不会崩溃，会在菜单里显示错误状态。
 
@@ -62,7 +62,7 @@ swift build
 swift run CodexTopGuageMac
 ```
 
-如果顶部栏显示 `Cdx --` 或菜单显示错误，请先确认 Codex 可执行文件存在：
+如果顶部栏显示 `Codex: --` 或菜单显示错误，请先确认 Codex 可执行文件存在：
 
 ```bash
 ls -l /Applications/Codex.app/Contents/Resources/codex
@@ -94,15 +94,15 @@ MIT。见 [LICENSE](LICENSE)。
 
 ## English
 
-CodexTopGuage_Mac is a small macOS menu bar utility that shows local Codex usage in the status bar, for example `Cdx 5h 23% 7d 41%`.
+CodexTopGuage_Mac is a small macOS menu bar utility that shows local Codex remaining quota in the status bar, for example `Codex: 5h88% 7d67%`.
 
 > Note: this project uses the internal/experimental Codex app-server method `account/rateLimits/read`. It is not a stable public API, so future Codex updates may require parser changes.
 
 ### Features
 
-- Shows 5h and 7d usage percentages in the macOS menu bar.
+- Shows 5h and 7d remaining percentages in the macOS menu bar.
 - Menu details include reset countdowns, data source, limit metadata, and last update time.
-- Refresh interval is selectable only between `5 seconds` and `10 seconds`; the default is `5 seconds`.
+- Refreshes automatically every 5 seconds without exposing refresh controls in the menu.
 - Runs fully locally. It does not upload usage, prompts, project paths, or account data.
 - Handles missing Codex installation, login issues, timeouts, and unavailable usage without crashing.
 
@@ -148,7 +148,7 @@ swift build
 swift run CodexTopGuageMac
 ```
 
-If the menu bar shows `Cdx --` or the menu reports an error, first verify the Codex executable:
+If the menu bar shows `Codex: --` or the menu reports an error, first verify the Codex executable:
 
 ```bash
 ls -l /Applications/Codex.app/Contents/Resources/codex
