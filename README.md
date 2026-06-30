@@ -54,6 +54,8 @@ swift build -c release
 
 如果已经启用开机自启动，也可以重新登录 macOS，LaunchAgent 会自动拉起它。
 
+脚本会对本地构建产物做 ad-hoc code signing，避免重新编译后被 macOS 拦截启动。
+
 ### 开机自启动
 
 启用当前用户登录后自动启动：
@@ -159,6 +161,8 @@ If you manually quit the app from the menu, reopen it with either method:
 You can also double-click `Start CodexTopGuage.command` in the project root from Finder. On first launch, macOS may show a security confirmation; after confirmation, the script builds the release binary if needed, starts the menu bar app, and closes the temporary Terminal window automatically.
 
 If Start at Login is enabled, logging out and back into macOS will also start it again through LaunchAgent.
+
+The script applies local ad-hoc code signing to the built binary so macOS does not block it after rebuilds.
 
 ### Start at Login
 

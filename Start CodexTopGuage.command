@@ -8,6 +8,8 @@ if [[ ! -x ".build/release/CodexTopGuageMac" ]]; then
   swift build -c release
 fi
 
+codesign --force --sign - "${SCRIPT_DIR}/.build/release/CodexTopGuageMac" >/dev/null
+
 nohup "${SCRIPT_DIR}/.build/release/CodexTopGuageMac" >/tmp/codextopguage.command.log 2>&1 &
 
 osascript -e 'tell application "Terminal" to close front window' >/dev/null 2>&1 &

@@ -290,28 +290,29 @@ final class MenuBarController: NSObject, NSApplicationDelegate {
 
     private func buildMenu() -> NSMenu {
         let menu = NSMenu()
+        menu.autoenablesItems = false
 
         if let snapshot = latestSnapshot {
-            menu.addItem(NSMenuItem(title: "5h remaining: \(remainingPercent(fromUsedPercent: snapshot.primaryPercent))", action: nil, keyEquivalent: ""))
-            menu.addItem(NSMenuItem(title: "7d remaining: \(remainingPercent(fromUsedPercent: snapshot.secondaryPercent))", action: nil, keyEquivalent: ""))
-            menu.addItem(NSMenuItem(title: "5h reset: \(countdown(to: snapshot.primaryResetsAt))", action: nil, keyEquivalent: ""))
-            menu.addItem(NSMenuItem(title: "7d reset: \(countdown(to: snapshot.secondaryResetsAt))", action: nil, keyEquivalent: ""))
-            menu.addItem(NSMenuItem(title: "Source: \(snapshot.source)", action: nil, keyEquivalent: ""))
-            menu.addItem(NSMenuItem(title: "Last updated: \(format(snapshot.fetchedAt))", action: nil, keyEquivalent: ""))
+            menu.addItem(infoItem("5h remaining: \(remainingPercent(fromUsedPercent: snapshot.primaryPercent))"))
+            menu.addItem(infoItem("7d remaining: \(remainingPercent(fromUsedPercent: snapshot.secondaryPercent))"))
+            menu.addItem(infoItem("5h reset: \(countdown(to: snapshot.primaryResetsAt))"))
+            menu.addItem(infoItem("7d reset: \(countdown(to: snapshot.secondaryResetsAt))"))
+            menu.addItem(infoItem("Source: \(snapshot.source)"))
+            menu.addItem(infoItem("Last updated: \(format(snapshot.fetchedAt))"))
 
             if let limitName = snapshot.limitName {
-                menu.addItem(NSMenuItem(title: "Limit: \(limitName)", action: nil, keyEquivalent: ""))
+                menu.addItem(infoItem("Limit: \(limitName)"))
             }
 
             if let limitId = snapshot.limitId {
-                menu.addItem(NSMenuItem(title: "Limit ID: \(limitId)", action: nil, keyEquivalent: ""))
+                menu.addItem(infoItem("Limit ID: \(limitId)"))
             }
         } else {
-            menu.addItem(NSMenuItem(title: "Usage unavailable", action: nil, keyEquivalent: ""))
+            menu.addItem(infoItem("Usage unavailable"))
         }
 
         if let latestError {
-            menu.addItem(NSMenuItem(title: "Status: \(latestError)", action: nil, keyEquivalent: ""))
+            menu.addItem(infoItem("Status: \(latestError)"))
         }
 
         let quitItem = NSMenuItem(title: "Quit", action: #selector(quit), keyEquivalent: "q")
@@ -319,6 +320,12 @@ final class MenuBarController: NSObject, NSApplicationDelegate {
         menu.addItem(quitItem)
 
         return menu
+    }
+
+    private func infoItem(_ title: String) -> NSMenuItem {
+        let item = NSMenuItem(title: title, action: nil, keyEquivalent: "")
+        item.isEnabled = true
+        return item
     }
 
     private func remainingPercent(fromUsedPercent usedPercent: Int?) -> String {

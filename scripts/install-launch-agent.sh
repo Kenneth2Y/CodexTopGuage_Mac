@@ -13,6 +13,8 @@ if [[ ! -x "${REPO_ROOT}/.build/release/CodexTopGuageMac" ]]; then
   swift build -c release
 fi
 
+codesign --force --sign - "${REPO_ROOT}/.build/release/CodexTopGuageMac" >/dev/null
+
 mkdir -p "${TARGET_DIR}"
 cp "${SOURCE_PLIST}" "${TARGET_PLIST}"
 
