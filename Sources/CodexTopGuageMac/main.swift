@@ -151,8 +151,8 @@ struct AppServerUsageProvider: Sendable {
         let secondary = limit["secondary"] as? [String: Any]
 
         return UsageSnapshot(
-            primaryPercent: percent(from: primary?["usedPercent"] ?? primary?["used_percent"]),
-            secondaryPercent: percent(from: secondary?["usedPercent"] ?? secondary?["used_percent"]),
+            primaryPercent: percentValue(from: primary?["usedPercent"] ?? primary?["used_percent"]),
+            secondaryPercent: percentValue(from: secondary?["usedPercent"] ?? secondary?["used_percent"]),
             primaryResetsAt: date(from: primary?["resetsAt"] ?? primary?["resets_at"]),
             secondaryResetsAt: date(from: secondary?["resetsAt"] ?? secondary?["resets_at"]),
             totalTokens: int(from: limit["totalTokens"] ?? limit["total_tokens"]),
@@ -163,13 +163,12 @@ struct AppServerUsageProvider: Sendable {
         )
     }
 
-    private func percent(from value: Any?) -> Int? {
+    private func percentValue(from value: Any?) -> Int? {
         guard let number = double(from: value) else {
             return nil
         }
 
-        let normalized = number <= 1 ? number * 100 : number
-        return min(100, max(0, Int(normalized.rounded())))
+        return min(100, max(0, Int(number.rounded())))
     }
 
     private func date(from value: Any?) -> Date? {
