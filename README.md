@@ -28,8 +28,10 @@ CodexTopGuage_Mac 是一个 macOS menu bar 小工具，用来在顶部状态栏�
 
 - macOS 13 或更新版本。
 - Xcode Command Line Tools 或 Xcode。
-- 已安装 Codex app，默认路径为 `/Applications/Codex.app`。
-- Codex 已登录可用。
+- 已安装 ChatGPT（其中包含 ChatGPT Codex），默认路径为 `/Applications/ChatGPT.app`。
+- ChatGPT Codex 已登录可用。
+
+本工具会优先使用新版路径 `/Applications/ChatGPT.app/Contents/Resources/codex`，并兼容旧版 `/Applications/Codex.app/Contents/Resources/codex`。
 
 ### 快速开始
 
@@ -84,10 +86,10 @@ swift build
 swift run CodexTopGuageMac
 ```
 
-如果顶部栏显示 `Codex: --` 或菜单显示错误，请先确认 Codex 可执行文件存在：
+如果顶部栏显示 `Codex: --` 或菜单显示错误，请先确认 ChatGPT Codex 可执行文件存在：
 
 ```bash
-ls -l /Applications/Codex.app/Contents/Resources/codex
+ls -l /Applications/ChatGPT.app/Contents/Resources/codex
 ```
 
 ### 数据来源
@@ -95,7 +97,7 @@ ls -l /Applications/Codex.app/Contents/Resources/codex
 首版只实现主通道：
 
 ```text
-/Applications/Codex.app/Contents/Resources/codex app-server --listen stdio://
+/Applications/ChatGPT.app/Contents/Resources/codex app-server --listen stdio://
   -> initialize
   -> account/rateLimits/read
 ```
@@ -136,8 +138,10 @@ The image above is a runtime screenshot: the menu bar shows remaining Codex quot
 
 - macOS 13 or later.
 - Xcode Command Line Tools or Xcode.
-- Codex app installed at the default `/Applications/Codex.app` path.
-- A usable signed-in Codex session.
+- ChatGPT with ChatGPT Codex installed at the default `/Applications/ChatGPT.app` path.
+- A usable signed-in ChatGPT Codex session.
+
+The app prefers the current `/Applications/ChatGPT.app/Contents/Resources/codex` executable and remains compatible with the legacy `/Applications/Codex.app/Contents/Resources/codex` location.
 
 ### Quick Start
 
@@ -192,10 +196,10 @@ swift build
 swift run CodexTopGuageMac
 ```
 
-If the menu bar shows `Codex: --` or the menu reports an error, first verify the Codex executable:
+If the menu bar shows `Codex: --` or the menu reports an error, first verify the ChatGPT Codex executable:
 
 ```bash
-ls -l /Applications/Codex.app/Contents/Resources/codex
+ls -l /Applications/ChatGPT.app/Contents/Resources/codex
 ```
 
 ### Data Source
@@ -203,7 +207,7 @@ ls -l /Applications/Codex.app/Contents/Resources/codex
 The first version implements the main channel only:
 
 ```text
-/Applications/Codex.app/Contents/Resources/codex app-server --listen stdio://
+/Applications/ChatGPT.app/Contents/Resources/codex app-server --listen stdio://
   -> initialize
   -> account/rateLimits/read
 ```

@@ -14,15 +14,26 @@ struct UsageSnapshot {
 }
 
 struct AppServerUsageProvider: Sendable {
+    private static let codexExecutableCandidates = [
+        "/Applications/ChatGPT.app/Contents/Resources/codex",
+        "/Applications/Codex.app/Contents/Resources/codex"
+    ]
+
     private let codexPath: String
     private let timeout: TimeInterval
 
     init(
-        codexPath: String = "/Applications/Codex.app/Contents/Resources/codex",
+        codexPath: String? = nil,
         timeout: TimeInterval = 5
     ) {
-        self.codexPath = codexPath
+        self.codexPath = codexPath ?? Self.discoverCodexExecutable()
         self.timeout = timeout
+    }
+
+    private static func discoverCodexExecutable() -> String {
+        codexExecutableCandidates.first(where: {
+            FileManager.default.isExecutableFile(atPath: $0)
+        }) ?? codexExecutableCandidates[0]
     }
 
     func fetch() async throws -> UsageSnapshot {
