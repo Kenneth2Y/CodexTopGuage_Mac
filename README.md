@@ -8,7 +8,7 @@
 
 ## 中文
 
-CodexTopGuage_Mac 是一个 macOS menu bar 小工具，用来在顶部状态栏显示本机 Codex 剩余额度信息，例如 `Codex: 5h88% 7d67%`。
+CodexTopGuage_Mac 是一个 macOS menu bar 小工具，用来在顶部状态栏显示本机 Codex 剩余额度信息，例如当前单一周限额下的 `Codex: 7d92%`。
 
 > 注意：本项目使用 Codex app-server 的内部/实验性 `account/rateLimits/read` 通道。它不是公开稳定 API，Codex 更新后可能需要调整解析逻辑。
 
@@ -18,7 +18,7 @@ CodexTopGuage_Mac 是一个 macOS menu bar 小工具，用来在顶部状态栏�
 
 ### 功能
 
-- 在 macOS 顶部状态栏显示 5h 和 7d remaining 百分比。
+- 根据接口返回的限额窗口动态显示 remaining 百分比，例如 `7d92%`；若官方恢复多个窗口，会自动并列显示。
 - 点击菜单查看 reset 倒计时、数据来源、limit 信息和最后更新时间。
 - 每 5 秒自动刷新，菜单不暴露刷新设置。
 - 完全本地运行，不上传 usage、prompt、项目路径或账号数据。
@@ -77,7 +77,7 @@ scripts/uninstall-launch-agent.sh
 
 ### menu bar 空间限制
 
-macOS 顶部 menu bar 的空间分配由系统控制。右侧状态栏图标很多时，系统可能隐藏、截断或挤掉部分菜单栏项目；应用本身不能完全控制这个行为。CodexTopGuage_Mac 已尽量使用短文本，例如 `Codex: 5h88% 7d67%`，但在窄屏或图标很多的情况下仍可能被系统遮挡。
+macOS 顶部 menu bar 的空间分配由系统控制。右侧状态栏图标很多时，系统可能隐藏、截断或挤掉部分菜单栏项目；应用本身不能完全控制这个行为。CodexTopGuage_Mac 会使用简短的动态窗口标签，例如 `Codex: 7d92%`，但在窄屏或图标很多的情况下仍可能被系统遮挡。
 
 ### 本地开发
 
@@ -118,7 +118,7 @@ MIT。见 [LICENSE](LICENSE)。
 
 ## English
 
-CodexTopGuage_Mac is a small macOS menu bar utility that shows local Codex remaining quota in the status bar, for example `Codex: 5h88% 7d67%`.
+CodexTopGuage_Mac is a small macOS menu bar utility that shows local Codex remaining quota in the status bar, for example `Codex: 7d92%` with the current single weekly limit.
 
 > Note: this project uses the internal/experimental Codex app-server method `account/rateLimits/read`. It is not a stable public API, so future Codex updates may require parser changes.
 
@@ -128,7 +128,7 @@ The image above is a runtime screenshot: the menu bar shows remaining Codex quot
 
 ### Features
 
-- Shows 5h and 7d remaining percentages in the macOS menu bar.
+- Dynamically shows remaining percentages for the windows returned by the API, such as `7d92%`; multiple windows are displayed together if they return in the future.
 - Menu details include reset countdowns, data source, limit metadata, and last update time.
 - Refreshes automatically every 5 seconds without exposing refresh controls in the menu.
 - Runs fully locally. It does not upload usage, prompts, project paths, or account data.
@@ -187,7 +187,7 @@ The LaunchAgent uses the absolute path to `.build/release/CodexTopGuageMac`. If 
 
 ### Menu Bar Space Limits
 
-macOS controls menu bar item placement. When the right side of the menu bar is crowded, the system may hide, truncate, or push out some items; the app cannot fully control that behavior. CodexTopGuage_Mac keeps the label short, for example `Codex: 5h88% 7d67%`, but it can still be hidden on narrow screens or heavily populated menu bars.
+macOS controls menu bar item placement. When the right side of the menu bar is crowded, the system may hide, truncate, or push out some items; the app cannot fully control that behavior. CodexTopGuage_Mac uses short dynamic window labels, for example `Codex: 7d92%`, but it can still be hidden on narrow screens or heavily populated menu bars.
 
 ### Local Development
 

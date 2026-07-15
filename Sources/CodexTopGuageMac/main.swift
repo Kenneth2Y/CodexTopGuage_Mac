@@ -4,6 +4,8 @@ import Foundation
 struct UsageSnapshot {
     let primaryPercent: Int?
     let secondaryPercent: Int?
+    let primaryWindowMinutes: Int?
+    let secondaryWindowMinutes: Int?
     let primaryResetsAt: Date?
     let secondaryResetsAt: Date?
     let totalTokens: Int?
@@ -164,6 +166,8 @@ struct AppServerUsageProvider: Sendable {
         return UsageSnapshot(
             primaryPercent: percentValue(from: primary?["usedPercent"] ?? primary?["used_percent"]),
             secondaryPercent: percentValue(from: secondary?["usedPercent"] ?? secondary?["used_percent"]),
+            primaryWindowMinutes: int(from: primary?["windowDurationMins"] ?? primary?["window_duration_mins"]),
+            secondaryWindowMinutes: int(from: secondary?["windowDurationMins"] ?? secondary?["window_duration_mins"]),
             primaryResetsAt: date(from: primary?["resetsAt"] ?? primary?["resets_at"]),
             secondaryResetsAt: date(from: secondary?["resetsAt"] ?? secondary?["resets_at"]),
             totalTokens: int(from: limit["totalTokens"] ?? limit["total_tokens"]),
@@ -236,6 +240,12 @@ enum UsageError: LocalizedError {
 
 @MainActor
 final class MenuBarController: NSObject, NSApplicationDelegate {
+    private struct DisplayWindow {
+        let label: String
+        let usedPercent: Int
+        let resetsAt: Date?
+    }
+
     private let statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
     private let provider = AppServerUsageProvider()
     private var timer: Timer?
@@ -293,9 +303,11 @@ final class MenuBarController: NSObject, NSApplicationDelegate {
     }
 
     private func statusTitle(for snapshot: UsageSnapshot) -> String {
-        let primary = remainingPercent(fromUsedPercent: snapshot.primaryPercent)
-        let secondary = remainingPercent(fromUsedPercent: snapshot.secondaryPercent)
-        return "Codex: 5h\(primary) 7d\(secondary)"
+        let values = displayWindows(for: snapshot).map {
+            "\($0.label)\(remainingPercent(fromUsedPercent: $0.usedPercent))"
+        }
+
+        return values.isEmpty ? "Codex: --" : "Codex: \(values.joined(separator: " "))"
     }
 
     private func buildMenu() -> NSMenu {
@@ -303,10 +315,16 @@ final class MenuBarController: NSObject, NSApplicationDelegate {
         menu.autoenablesItems = false
 
         if let snapshot = latestSnapshot {
-            menu.addItem(infoItem("5h remaining: \(remainingPercent(fromUsedPercent: snapshot.primaryPercent))"))
-            menu.addItem(infoItem("7d remaining: \(remainingPercent(fromUsedPercent: snapshot.secondaryPercent))"))
-            menu.addItem(infoItem("5h reset: \(countdown(to: snapshot.primaryResetsAt))"))
-            menu.addItem(infoItem("7d reset: \(countdown(to: snapshot.secondaryResetsAt))"))
+            let windows = displayWindows(for: snapshot)
+
+            for window in windows {
+                menu.addItem(infoItem("\(window.label) remaining: \(remainingPercent(fromUsedPercent: window.usedPercent))"))
+            }
+
+            for window in windows {
+                menu.addItem(infoItem("\(window.label) reset: \(countdown(to: window.resetsAt))"))
+            }
+
             menu.addItem(infoItem("Source: \(snapshot.source)"))
             menu.addItem(infoItem("Last updated: \(format(snapshot.fetchedAt))"))
 
@@ -336,6 +354,44 @@ final class MenuBarController: NSObject, NSApplicationDelegate {
         let item = NSMenuItem(title: title, action: nil, keyEquivalent: "")
         item.isEnabled = true
         return item
+    }
+
+    private func displayWindows(for snapshot: UsageSnapshot) -> [DisplayWindow] {
+        var windows: [DisplayWindow] = []
+
+        if let usedPercent = snapshot.primaryPercent {
+            windows.append(DisplayWindow(
+                label: durationLabel(minutes: snapshot.primaryWindowMinutes, fallback: "5h"),
+                usedPercent: usedPercent,
+                resetsAt: snapshot.primaryResetsAt
+            ))
+        }
+
+        if let usedPercent = snapshot.secondaryPercent {
+            windows.append(DisplayWindow(
+                label: durationLabel(minutes: snapshot.secondaryWindowMinutes, fallback: "7d"),
+                usedPercent: usedPercent,
+                resetsAt: snapshot.secondaryResetsAt
+            ))
+        }
+
+        return windows
+    }
+
+    private func durationLabel(minutes: Int?, fallback: String) -> String {
+        guard let minutes, minutes > 0 else {
+            return fallback
+        }
+
+        if minutes.isMultiple(of: 1_440) {
+            return "\(minutes / 1_440)d"
+        }
+
+        if minutes.isMultiple(of: 60) {
+            return "\(minutes / 60)h"
+        }
+
+        return "\(minutes)m"
     }
 
     private func remainingPercent(fromUsedPercent usedPercent: Int?) -> String {
