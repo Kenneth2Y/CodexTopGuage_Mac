@@ -16,7 +16,12 @@ struct UsageSnapshot {
 }
 
 struct AppServerUsageProvider: Sendable {
+    private static let chatGPTCodexDirectory =
+        "/Applications/ChatGPT.app/Contents/Resources/codex-cli"
+
     private static let codexExecutableCandidates = [
+        "\(chatGPTCodexDirectory)/bin/codex",
+        "\(chatGPTCodexDirectory)/CodexCLI.app/Contents/MacOS/codex",
         "/Applications/ChatGPT.app/Contents/Resources/codex",
         "/Applications/Codex.app/Contents/Resources/codex"
     ]
@@ -33,9 +38,36 @@ struct AppServerUsageProvider: Sendable {
     }
 
     private static func discoverCodexExecutable() -> String {
-        codexExecutableCandidates.first(where: {
-            FileManager.default.isExecutableFile(atPath: $0)
-        }) ?? codexExecutableCandidates[0]
+        let fileManager = FileManager.default
+
+        if let candidate = codexExecutableCandidates.first(where: {
+            fileManager.isExecutableFile(atPath: $0)
+        }) {
+            return candidate
+        }
+
+        let directoryURL = URL(fileURLWithPath: chatGPTCodexDirectory)
+        let keys: [URLResourceKey] = [.isExecutableKey, .isRegularFileKey]
+
+        if let enumerator = fileManager.enumerator(
+            at: directoryURL,
+            includingPropertiesForKeys: keys,
+            options: [.skipsHiddenFiles]
+        ) {
+            for case let url as URL in enumerator where url.lastPathComponent == "codex" {
+                guard
+                    let values = try? url.resourceValues(forKeys: Set(keys)),
+                    values.isExecutable == true,
+                    values.isRegularFile == true
+                else {
+                    continue
+                }
+
+                return url.path
+            }
+        }
+
+        return codexExecutableCandidates[0]
     }
 
     func fetch() async throws -> UsageSnapshot {

@@ -31,7 +31,7 @@ CodexTopGuage_Mac 是一个 macOS menu bar 小工具，用来在顶部状态栏�
 - 已安装 ChatGPT（其中包含 ChatGPT Codex），默认路径为 `/Applications/ChatGPT.app`。
 - ChatGPT Codex 已登录可用。
 
-本工具会优先使用新版路径 `/Applications/ChatGPT.app/Contents/Resources/codex`，并兼容旧版 `/Applications/Codex.app/Contents/Resources/codex`。
+本工具会优先使用当前 ChatGPT 内置的 `/Applications/ChatGPT.app/Contents/Resources/codex-cli/bin/codex`，并在 `codex-cli` 目录内自动查找后备入口，同时兼容旧版 ChatGPT 和 Codex app 路径。
 
 ### 快速开始
 
@@ -89,7 +89,7 @@ swift run CodexTopGuageMac
 如果顶部栏显示 `Codex: --` 或菜单显示错误，请先确认 ChatGPT Codex 可执行文件存在：
 
 ```bash
-ls -l /Applications/ChatGPT.app/Contents/Resources/codex
+ls -l /Applications/ChatGPT.app/Contents/Resources/codex-cli/bin/codex
 ```
 
 ### 数据来源
@@ -97,7 +97,7 @@ ls -l /Applications/ChatGPT.app/Contents/Resources/codex
 首版只实现主通道：
 
 ```text
-/Applications/ChatGPT.app/Contents/Resources/codex app-server --listen stdio://
+/Applications/ChatGPT.app/Contents/Resources/codex-cli/bin/codex app-server --listen stdio://
   -> initialize
   -> account/rateLimits/read
 ```
@@ -141,7 +141,7 @@ The image above is a runtime screenshot: the menu bar shows remaining Codex quot
 - ChatGPT with ChatGPT Codex installed at the default `/Applications/ChatGPT.app` path.
 - A usable signed-in ChatGPT Codex session.
 
-The app prefers the current `/Applications/ChatGPT.app/Contents/Resources/codex` executable and remains compatible with the legacy `/Applications/Codex.app/Contents/Resources/codex` location.
+The app prefers the current bundled `/Applications/ChatGPT.app/Contents/Resources/codex-cli/bin/codex` launcher, searches the `codex-cli` directory for a fallback, and remains compatible with legacy ChatGPT and Codex app locations.
 
 ### Quick Start
 
@@ -199,7 +199,7 @@ swift run CodexTopGuageMac
 If the menu bar shows `Codex: --` or the menu reports an error, first verify the ChatGPT Codex executable:
 
 ```bash
-ls -l /Applications/ChatGPT.app/Contents/Resources/codex
+ls -l /Applications/ChatGPT.app/Contents/Resources/codex-cli/bin/codex
 ```
 
 ### Data Source
@@ -207,7 +207,7 @@ ls -l /Applications/ChatGPT.app/Contents/Resources/codex
 The first version implements the main channel only:
 
 ```text
-/Applications/ChatGPT.app/Contents/Resources/codex app-server --listen stdio://
+/Applications/ChatGPT.app/Contents/Resources/codex-cli/bin/codex app-server --listen stdio://
   -> initialize
   -> account/rateLimits/read
 ```
