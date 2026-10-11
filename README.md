@@ -8,7 +8,7 @@
 
 ## 中文
 
-CodexTopGuage_Mac 是一个 macOS menu bar 小工具，用来在顶部状态栏显示本机 Codex 剩余额度信息，例如当前单一周限额下的 `Codex: 7d92%`。
+CodexTopGuage_Mac 是一个 macOS menu bar 小工具，用来在顶部状态栏显示本机 Codex 剩余额度信息，例如 `Codex: 5h100% 7d100%`。
 
 > 注意：本项目使用 Codex app-server 的内部/实验性 `account/rateLimits/read` 通道。它不是公开稳定 API，Codex 更新后可能需要调整解析逻辑。
 
@@ -18,7 +18,7 @@ CodexTopGuage_Mac 是一个 macOS menu bar 小工具，用来在顶部状态栏�
 
 ### 功能
 
-- 根据接口返回的限额窗口动态显示 remaining 百分比，例如 `7d92%`；若官方恢复多个窗口，会自动并列显示。
+- 根据接口返回的限额窗口动态显示 remaining 百分比，例如 `5h100% 7d100%`；若官方调整窗口数量或周期，标签会随接口返回值变化。
 - 点击菜单查看 reset 倒计时、数据来源、limit 信息和最后更新时间。
 - 每 5 秒自动刷新，菜单不暴露刷新设置。
 - 完全本地运行，不上传 usage、prompt、项目路径或账号数据。
@@ -118,7 +118,7 @@ MIT。见 [LICENSE](LICENSE)。
 
 ## English
 
-CodexTopGuage_Mac is a small macOS menu bar utility that shows local Codex remaining quota in the status bar, for example `Codex: 7d92%` with the current single weekly limit.
+CodexTopGuage_Mac is a small macOS menu bar utility that shows local Codex remaining quota in the status bar, for example `Codex: 5h100% 7d100%`.
 
 > Note: this project uses the internal/experimental Codex app-server method `account/rateLimits/read`. It is not a stable public API, so future Codex updates may require parser changes.
 
@@ -128,7 +128,7 @@ The image above is a runtime screenshot: the menu bar shows remaining Codex quot
 
 ### Features
 
-- Dynamically shows remaining percentages for the windows returned by the API, such as `7d92%`; multiple windows are displayed together if they return in the future.
+- Dynamically shows remaining percentages for the windows returned by the API, such as `5h100% 7d100%`; labels follow future changes to the number or duration of limit windows.
 - Menu details include reset countdowns, data source, limit metadata, and last update time.
 - Refreshes automatically every 5 seconds without exposing refresh controls in the menu.
 - Runs fully locally. It does not upload usage, prompts, project paths, or account data.
